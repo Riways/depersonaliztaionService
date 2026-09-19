@@ -2,8 +2,9 @@ package org.example.encoderlab.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,19 +16,21 @@ public class PersonalDataService {
     public List<String> extractEmails(String text) {
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
         Matcher m = EMAIL.matcher(text);
-        List<String> result = new ArrayList<String>();
-        while (m.find())
-            result.add(m.group());
-        return result;
+        Set<String> result = new LinkedHashSet<>();
+        while (m.find()){
+                result.add(m.group());
+        }
+        return List.copyOf(result);
     }
 
     public List<String> extractPhones(String text) {
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
         Matcher m = PHONE.matcher(text);
-        List<String> result = new ArrayList<String>();
-        while (m.find())
+        Set<String> result = new LinkedHashSet<>();
+        while (m.find()){
             result.add(m.group());
-        return result;
+        }
+        return List.copyOf(result);
     }
     public String removeEmails(String text){
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
