@@ -17,27 +17,29 @@ public class PersonalDataService {
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
         Matcher m = EMAIL.matcher(text);
         Set<String> result = new LinkedHashSet<>();
-        while (m.find()){
-                result.add(m.group());
-        }
-        return List.copyOf(result);
-    }
-
-    public List<String> extractPhones(String text) {
-        nonNullStringArgumentCheck(text, "Argument should not be NULL");
-        Matcher m = PHONE.matcher(text);
-        Set<String> result = new LinkedHashSet<>();
-        while (m.find()){
+        while (m.find()) {
             result.add(m.group());
         }
         return List.copyOf(result);
     }
-    public String removeEmails(String text){
+
+    //Телефон в query-параметре должен быть URL-кодирован: `+` → `%2B`.
+    public List<String> extractPhones(String text) {
+        nonNullStringArgumentCheck(text, "Argument should not be NULL");
+        Matcher m = PHONE.matcher(text);
+        Set<String> result = new LinkedHashSet<>();
+        while (m.find()) {
+            result.add(m.group());
+        }
+        return List.copyOf(result);
+    }
+
+    public String removeEmails(String text) {
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
         return EMAIL.matcher(text).replaceAll("");
     }
 
-    public String removePhones(String text){
+    public String removePhones(String text) {
         nonNullStringArgumentCheck(text, "Argument should not be NULL");
         return PHONE.matcher(text).replaceAll("");
     }
@@ -46,8 +48,8 @@ public class PersonalDataService {
         return removePhones(removeEmails(text));
     }
 
-    private void nonNullStringArgumentCheck(String arg, String msg){
-        if(arg == null)
+    private void nonNullStringArgumentCheck(String arg, String msg) {
+        if (arg == null)
             throw new IllegalArgumentException(msg);
     }
 }
