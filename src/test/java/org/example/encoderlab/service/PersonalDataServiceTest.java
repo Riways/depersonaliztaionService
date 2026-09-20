@@ -3,14 +3,21 @@ package org.example.encoderlab.service;
 import org.example.encoderlab.cache.PersonalDataCache;
 import org.example.encoderlab.counter.RequestCounter;
 import org.example.encoderlab.dto.PersonalDataResponse;
+import org.example.encoderlab.repository.PersonalDataResultRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class PersonalDataServiceTest {
-    private final PersonalDataService service = new PersonalDataService(new PersonalDataCache(), new RequestCounter());
+class PersonalDataServiceTest {
+
+    private final PersonalDataResultRepository repository =
+            mock(PersonalDataResultRepository.class);
+
+    private final PersonalDataService service =
+            new PersonalDataService(new PersonalDataCache(), new RequestCounter(), repository);
 
     // ==================================================
     // extractEmails
@@ -265,6 +272,10 @@ public class PersonalDataServiceTest {
         assertFalse(cleaned.contains("+375 (29) 123-45-67"));
         assertTrue(cleaned.contains("Contact me at"));
     }
+
+    // ==================================================
+    // processBulk
+    // ==================================================
 
     @Test
     void processBulk_shouldReturnOneResultPerText() {
