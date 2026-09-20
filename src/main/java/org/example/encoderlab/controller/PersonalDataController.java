@@ -1,18 +1,18 @@
 package org.example.encoderlab.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.example.encoderlab.counter.RequestCounter;
+import org.example.encoderlab.dto.BulkRequest;
 import org.example.encoderlab.dto.PersonalDataResponse;
 import org.example.encoderlab.service.PersonalDataService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -46,5 +46,10 @@ public class PersonalDataController {
     @GetMapping("/counter")
     public Map<String, Long> counter() {
         return Map.of("count", counter.get());
+    }
+
+    @PostMapping("/bulk")
+    public List<PersonalDataResponse> bulk(@RequestBody @Valid BulkRequest request) {
+        return pds.processBulk(request.texts(), request.mode());
     }
 }

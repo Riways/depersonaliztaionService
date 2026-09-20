@@ -40,6 +40,12 @@ public class PersonalDataService {
         return result;
     }
 
+    public List<PersonalDataResponse> processBulk(List<String> texts, String mode) {
+        return texts.stream()
+                .map(t -> process(t, mode))
+                .toList();
+    }
+
     private PersonalDataResponse compute(String text, String mode) {
         return switch (mode) {
             case "extract" -> new PersonalDataResponse(
@@ -57,6 +63,7 @@ public class PersonalDataService {
     }
 
     public List<String> extractEmails(String text) {
+        checkNotNull(text);
         Matcher m = EMAIL.matcher(text);
         Set<String> result = new LinkedHashSet<>();
         while (m.find()) {
@@ -66,6 +73,7 @@ public class PersonalDataService {
     }
 
     public List<String> extractPhones(String text) {
+        checkNotNull(text);
         Matcher m = PHONE.matcher(text);
         Set<String> result = new LinkedHashSet<>();
         while (m.find()) {
@@ -75,14 +83,24 @@ public class PersonalDataService {
     }
 
     public String removeEmails(String text) {
+        checkNotNull(text);
         return EMAIL.matcher(text).replaceAll("");
     }
 
     public String removePhones(String text) {
+        checkNotNull(text);
         return PHONE.matcher(text).replaceAll("");
     }
 
     public String removeAll(String text) {
+        checkNotNull(text);
         return removePhones(removeEmails(text));
     }
+
+    private void checkNotNull(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("Argument should not be NULL");
+        }
+    }
+
 }

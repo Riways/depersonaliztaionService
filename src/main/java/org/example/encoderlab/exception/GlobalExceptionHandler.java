@@ -3,6 +3,7 @@ package org.example.encoderlab.exception;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,6 +21,18 @@ public class GlobalExceptionHandler {
         body.put("error", "VALIDATION_FAILED");
         body.put("details", ex.getConstraintViolations().stream()
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex
+    ) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", "VALIDATION_FAILED");
+        body.put("details", ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
                 .toList());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }

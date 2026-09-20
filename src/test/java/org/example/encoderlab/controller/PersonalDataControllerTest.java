@@ -26,8 +26,9 @@ class PersonalDataControllerTest {
 
     @Test
     void extract_shouldReturn200() throws Exception {
-        when(pds.extractEmails(anyString())).thenReturn(List.of("a@b.com"));
-        when(pds.extractPhones(anyString())).thenReturn(List.of());
+        when(pds.process(anyString(), anyString()))
+                .thenReturn(new org.example.encoderlab.dto.PersonalDataResponse(
+                        List.of("a@b.com"), List.of(), ""));
 
         mockMvc.perform(get("/api/v1/personal-data")
                         .param("text", "a@b.com")
@@ -54,7 +55,7 @@ class PersonalDataControllerTest {
 
     @Test
     void serviceThrows_shouldReturn500() throws Exception {
-        when(pds.extractEmails(anyString()))
+        when(pds.process(anyString(), anyString()))
                 .thenThrow(new RuntimeException("boom"));
 
         mockMvc.perform(get("/api/v1/personal-data")
