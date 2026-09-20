@@ -1,5 +1,6 @@
 package org.example.encoderlab.controller;
 
+import org.example.encoderlab.dto.PersonalDataResponse;
 import org.example.encoderlab.service.PersonalDataService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,11 @@ class PersonalDataControllerTest {
     @MockBean
     private PersonalDataService pds;
 
+
     @Test
     void extract_shouldReturn200() throws Exception {
         when(pds.process(anyString(), anyString()))
-                .thenReturn(new org.example.encoderlab.dto.PersonalDataResponse(
+                .thenReturn(new PersonalDataResponse(
                         List.of("a@b.com"), List.of(), ""));
 
         mockMvc.perform(get("/api/v1/personal-data")

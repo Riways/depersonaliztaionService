@@ -3,6 +3,8 @@ package org.example.encoderlab.service;
 import org.example.encoderlab.cache.PersonalDataCache;
 import org.example.encoderlab.counter.RequestCounter;
 import org.example.encoderlab.dto.PersonalDataResponse;
+import org.example.encoderlab.entity.PersonalDataResult;
+import org.example.encoderlab.repository.PersonalDataResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
@@ -22,13 +24,18 @@ public class PersonalDataService {
 
     private final PersonalDataCache cache;
     private final RequestCounter counter;
+    private final PersonalDataResultRepository repository;
 
-    public PersonalDataService(PersonalDataCache cache, RequestCounter counter) {
+    public PersonalDataService(PersonalDataCache cache,
+                               RequestCounter counter,
+                               PersonalDataResultRepository repository) {
         this.cache = cache;
         this.counter = counter;
+        this.repository = repository;
     }
 
     public PersonalDataResponse process(String text, String mode) {
+        checkNotNull(text, "Argument should not be NULL");
         counter.increment();
         String key = mode + ":" + text;
         PersonalDataResponse cached = cache.get(key);
@@ -37,6 +44,8 @@ public class PersonalDataService {
         }
         PersonalDataResponse result = compute(text, mode);
         cache.put(key, result);
+        repository.save(new PersonalDataResult(
+                mode, text, result.emails(), result.phones(), result.sanitizedText()));
         return result;
     }
 
@@ -63,7 +72,7 @@ public class PersonalDataService {
     }
 
     public List<String> extractEmails(String text) {
-        checkNotNull(text);
+        checkNotNull(text, "Argument should not be NULL");
         Matcher m = EMAIL.matcher(text);
         Set<String> result = new LinkedHashSet<>();
         while (m.find()) {
@@ -73,7 +82,7 @@ public class PersonalDataService {
     }
 
     public List<String> extractPhones(String text) {
-        checkNotNull(text);
+        checkNotNull(text, "Argument should not be NULL");
         Matcher m = PHONE.matcher(text);
         Set<String> result = new LinkedHashSet<>();
         while (m.find()) {
@@ -83,24 +92,23 @@ public class PersonalDataService {
     }
 
     public String removeEmails(String text) {
-        checkNotNull(text);
+        checkNotNull(text, "Argument should not be NULL");
         return EMAIL.matcher(text).replaceAll("");
     }
 
     public String removePhones(String text) {
-        checkNotNull(text);
+        checkNotNull(text, "Argument should not be NULL");
         return PHONE.matcher(text).replaceAll("");
     }
 
     public String removeAll(String text) {
-        checkNotNull(text);
+        checkNotNull(text, "Argument should not be NULL");
         return removePhones(removeEmails(text));
     }
 
-    private void checkNotNull(String text) {
+    private void checkNotNull(String text, String message) {
         if (text == null) {
-            throw new IllegalArgumentException("Argument should not be NULL");
+            throw new IllegalArgumentException(message);
         }
     }
-
 }
