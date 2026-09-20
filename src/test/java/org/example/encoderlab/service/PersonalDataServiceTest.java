@@ -1,5 +1,8 @@
 package org.example.encoderlab.service;
 
+import org.example.encoderlab.cache.PersonalDataCache;
+import org.example.encoderlab.counter.RequestCounter;
+import org.example.encoderlab.dto.PersonalDataResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PersonalDataServiceTest {
-    private final PersonalDataService service = new PersonalDataService();
+    private final PersonalDataService service = new PersonalDataService(new PersonalDataCache(), new RequestCounter());
 
     // ==================================================
     // extractEmails
@@ -261,5 +264,14 @@ public class PersonalDataServiceTest {
         assertFalse(cleaned.contains("john.doe@example.com"));
         assertFalse(cleaned.contains("+375 (29) 123-45-67"));
         assertTrue(cleaned.contains("Contact me at"));
+    }
+
+    @Test
+    void processBulk_shouldReturnOneResultPerText() {
+        List<PersonalDataResponse> results =
+                service.processBulk(List.of("a@b.com", "c@d.org"), "extract");
+        assertEquals(2, results.size());
+        assertEquals(List.of("a@b.com"), results.get(0).emails());
+        assertEquals(List.of("c@d.org"), results.get(1).emails());
     }
 }
