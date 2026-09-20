@@ -1,6 +1,7 @@
 package org.example.encoderlab.service;
 
 import org.example.encoderlab.cache.PersonalDataCache;
+import org.example.encoderlab.counter.RequestCounter;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PersonalDataServiceTest {
-    private final PersonalDataService service = new PersonalDataService(new PersonalDataCache());
+    private final PersonalDataService service = new PersonalDataService(new PersonalDataCache(), new RequestCounter());
 
     // ==================================================
     // extractEmails

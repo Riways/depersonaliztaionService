@@ -1,6 +1,7 @@
 package org.example.encoderlab.service;
 
 import org.example.encoderlab.cache.PersonalDataCache;
+import org.example.encoderlab.counter.RequestCounter;
 import org.example.encoderlab.dto.PersonalDataResponse;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +21,15 @@ public class PersonalDataService {
             Pattern.compile("(?<!\\d)(\\+375|80)([\\s\\-]?\\(?\\d{2}\\)?[\\s\\-]?\\d{3}[\\s\\-]?\\d{2}[\\s\\-]?\\d{2})(?!\\d)");
 
     private final PersonalDataCache cache;
+    private final RequestCounter counter;
 
-    public PersonalDataService(PersonalDataCache cache) {
+    public PersonalDataService(PersonalDataCache cache, RequestCounter counter) {
         this.cache = cache;
+        this.counter = counter;
     }
 
     public PersonalDataResponse process(String text, String mode) {
+        counter.increment();
         String key = mode + ":" + text;
         PersonalDataResponse cached = cache.get(key);
         if (cached != null) {
